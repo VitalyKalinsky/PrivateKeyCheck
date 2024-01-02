@@ -1,0 +1,113 @@
+// ------------------------------------------------------------------
+// Transitive dependencies of this project determined from the
+// maven pom organized by organization.
+// ------------------------------------------------------------------
+
+Maven Plugin Plugin
+
+
+From: 'an unknown organization'
+  - QDox (https://github.com/paul-hammant/qdox) com.thoughtworks.qdox:qdox:jar:2.0.3
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - BeanShell (https://github.com/beanshell/beanshell/) org.apache-extras.beanshell:bsh:jar:2.0b6
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - snappy (http://github.com/dain/snappy) org.iq80.snappy:snappy:jar:0.4
+    License: Apache License 2.0  (http://www.apache.org/licenses/LICENSE-2.0.html)
+  - plexus-build-api (http://forge.sonatype.com/spice-parent/plexus-build-api/) org.sonatype.plexus:plexus-build-api:jar:0.0.7
+    License: Apache Public License 2.0  (http://www.apache.org/licenses/LICENSE-2.0)
+  - XZ for Java (https://tukaani.org/xz/java.html) org.tukaani:xz:jar:1.9
+    License: Public Domain 
+
+From: 'Apache Software Foundation' (http://www.apache.org)
+  - commons-collections  commons-collections:commons-collections:jar:3.1
+
+
+From: 'Codehaus Plexus' (http://codehaus-plexus.github.io/)
+  - Plexus Velocity Component (http://codehaus-plexus.github.io/plexus-components/plexus-velocity/) org.codehaus.plexus:plexus-velocity:jar:1.2
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'Codehaus Plexus' (https://codehaus-plexus.github.io/)
+  - Plexus Archiver Component (https://codehaus-plexus.github.io/plexus-archiver/) org.codehaus.plexus:plexus-archiver:jar:4.7.1
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Plexus IO Components (https://codehaus-plexus.github.io/plexus-io/) org.codehaus.plexus:plexus-io:jar:3.4.1
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Plexus Languages :: Java (https://codehaus-plexus.github.io/plexus-languages/plexus-java/) org.codehaus.plexus:plexus-java:jar:1.1.2
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Plexus Common Utilities (https://codehaus-plexus.github.io/plexus-utils/) org.codehaus.plexus:plexus-utils:jar:3.5.1
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'com.github.luben'
+  - zstd-jni (https://github.com/luben/zstd-jni) com.github.luben:zstd-jni:jar:1.5.5-2
+    License: BSD 2-Clause License  (https://opensource.org/licenses/BSD-2-Clause)
+
+From: 'Jonathan Hedley' (https://jhy.io/)
+  - jsoup Java HTML Parser (https://jsoup.org/) org.jsoup:jsoup:jar:1.16.1
+    License: The MIT License  (https://jsoup.org/license)
+
+From: 'OW2' (http://www.ow2.org/)
+  - asm (http://asm.ow2.io/) org.ow2.asm:asm:jar:9.5
+    License: BSD-3-Clause  (https://asm.ow2.io/license.html)
+  - asm-analysis (http://asm.ow2.io/) org.ow2.asm:asm-analysis:jar:9.5
+    License: BSD-3-Clause  (https://asm.ow2.io/license.html)
+  - asm-commons (http://asm.ow2.io/) org.ow2.asm:asm-commons:jar:9.5
+    License: BSD-3-Clause  (https://asm.ow2.io/license.html)
+  - asm-tree (http://asm.ow2.io/) org.ow2.asm:asm-tree:jar:9.5
+    License: BSD-3-Clause  (https://asm.ow2.io/license.html)
+  - asm-util (http://asm.ow2.io/) org.ow2.asm:asm-util:jar:9.5
+    License: BSD-3-Clause  (https://asm.ow2.io/license.html)
+
+From: 'QOS.ch' (http://www.qos.ch)
+  - SLF4J API Module (http://www.slf4j.org) org.slf4j:slf4j-api:jar:1.7.36
+    License: MIT License  (http://www.opensource.org/licenses/mit-license.php)
+
+From: 'sourceforge' (http://sourceforge.net)
+  - JTidy (http://jtidy.sourceforge.net) net.sf.jtidy:jtidy:jar:r938
+    License: Java HTML Tidy License  (http://jtidy.svn.sourceforge.net/viewvc/jtidy/trunk/jtidy/LICENSE.txt?revision=95)
+
+From: 'The Apache Software Foundation' (http://www.apache.org/)
+  - Commons Lang (http://commons.apache.org/lang/) commons-lang:commons-lang:jar:2.4
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Commons Logging (http://commons.apache.org/proper/commons-logging/) commons-logging:commons-logging:jar:1.2
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache HttpClient (http://hc.apache.org/httpcomponents-client-ga) org.apache.httpcomponents:httpclient:jar:4.5.14
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache HttpCore (http://hc.apache.org/httpcomponents-core-ga) org.apache.httpcomponents:httpcore:jar:4.4.16
+    License: Apache License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Maven Wagon :: API (http://maven.apache.org/wagon/wagon-provider-api) org.apache.maven.wagon:wagon-provider-api:jar:2.4
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Velocity (http://velocity.apache.org/engine/devel/) org.apache.velocity:velocity:jar:1.7
+    License: The Apache Software License, Version 2.0  (http://www.apache.org/licenses/LICENSE-2.0.txt)
+
+From: 'The Apache Software Foundation' (https://www.apache.org/)
+  - Apache Commons Codec (http://commons.apache.org/proper/commons-codec/) commons-codec:commons-codec:jar:1.11
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Commons IO (https://commons.apache.org/proper/commons-io/) commons-io:commons-io:jar:2.11.0
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Commons Compress (https://commons.apache.org/proper/commons-compress/) org.apache.commons:commons-compress:jar:1.23.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Doxia :: Logging API (https://maven.apache.org/doxia/doxia/doxia-logging-api/) org.apache.maven.doxia:doxia-logging-api:jar:1.11.1
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Doxia :: Sink API (https://maven.apache.org/doxia/doxia/doxia-sink-api/) org.apache.maven.doxia:doxia-sink-api:jar:1.11.1
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tools Java Annotations (https://maven.apache.org/plugin-tools/maven-plugin-annotations) org.apache.maven.plugin-tools:maven-plugin-annotations:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tool for Java with Annotations (https://maven.apache.org/plugin-tools/maven-plugin-tools-annotations) org.apache.maven.plugin-tools:maven-plugin-tools-annotations:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tool for Ant (https://maven.apache.org/plugin-tools/maven-script/maven-plugin-tools-ant) org.apache.maven.plugin-tools:maven-plugin-tools-ant:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tools Extractor API (https://maven.apache.org/plugin-tools/maven-plugin-tools-api) org.apache.maven.plugin-tools:maven-plugin-tools-api:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tool for Beanshell (https://maven.apache.org/plugin-tools/maven-script/maven-plugin-tools-beanshell) org.apache.maven.plugin-tools:maven-plugin-tools-beanshell:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tools Generators (https://maven.apache.org/plugin-tools/maven-plugin-tools-generators) org.apache.maven.plugin-tools:maven-plugin-tools-generators:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Tool for Java with Javadoc Tags (https://maven.apache.org/plugin-tools/maven-plugin-tools-java) org.apache.maven.plugin-tools:maven-plugin-tools-java:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Maven Plugin Metadata Model (https://maven.apache.org/plugin-tools/maven-script/maven-plugin-tools-model) org.apache.maven.plugin-tools:maven-plugin-tools-model:jar:3.9.0
+    License: Apache-2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+  - Apache Maven Reporting API (https://maven.apache.org/shared/maven-reporting-api/) org.apache.maven.reporting:maven-reporting-api:jar:3.1.1
+    License: Apache License, Version 2.0  (https://www.apache.org/licenses/LICENSE-2.0.txt)
+
+
+
+
