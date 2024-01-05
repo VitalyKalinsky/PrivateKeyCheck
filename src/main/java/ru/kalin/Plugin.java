@@ -3,6 +3,7 @@ package ru.kalin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -21,7 +22,7 @@ public class Plugin extends AbstractMojo {
     private static final LinkedList<Found> found = new LinkedList<>();
 
     @Override
-    public void execute(){
+    public void execute() {
         LinkedHashSet<File> files = new LinkedHashSet<>();
         Arrays.stream(filesToCheck).forEach(fileName -> files.add(new File(fileName)));
         Arrays.stream(directoriesToCheck)
@@ -45,7 +46,7 @@ public class Plugin extends AbstractMojo {
         return index == -1 ? null : fName.substring(index + 1);
     }
 
-    void checkFile(File file){
+    void checkFile(File file) {
         try {
             String extension = getFileExtension(file.getName());
             ArrayList<String> lines = new BufferedReader(
@@ -67,20 +68,32 @@ public class Plugin extends AbstractMojo {
     }
 
     void checkPass(String line, int i, File file) {
-        char quot;
+        char sign;
         if (line.matches(".*\".*\".*")) {
-            quot = '"';
+            sign = '"';
         } else if (line.matches(".*'.*'.*")) {
-            quot = '\'';
+            sign = '\'';
         } else
             return;
-
-        String pass = line.substring(line.indexOf(quot) + 1, line.lastIndexOf(quot)).strip();
-        byte chance = getChance(pass);
+        byte chance = getChanceRexex(line, sign);
         byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
         if (chance + hasSuspicious >= 1) {
             found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
         }
+    }
+
+    private byte getChanceRexex(String line, char sign) {
+        Pattern arg = Pattern.compile(sign + "(.*?)" + sign);
+        Matcher matcher = arg.matcher(line);
+        byte chance = 0;
+        while (matcher.find()) {
+            String match = matcher.group(0);
+            String pass = match.substring(match.indexOf(sign) + 1, match.lastIndexOf(sign)).strip();
+            byte curChance = getChance(pass);
+            if (curChance > chance)
+                chance = curChance;
+        }
+        return chance;
     }
 
     void checkXMLPass(String line, int i, File file) {
@@ -95,16 +108,7 @@ public class Plugin extends AbstractMojo {
                 sign = '\'';
             }
 
-            Pattern arg = Pattern.compile(sign + "(.*?)" + sign);
-            Matcher matcher = arg.matcher(line);
-            byte chance = 0;
-            while (matcher.find()) {
-                String match = matcher.group(0);
-                String pass = match.substring(match.indexOf(sign) + 1, match.lastIndexOf(sign)).strip();
-                byte curChance = getChance(pass);
-                if (curChance > chance)
-                    chance = curChance;
-            }
+            byte chance = getChanceRexex(line, sign);
 
             if (count == 2) {
                 String pass = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<")).strip();
