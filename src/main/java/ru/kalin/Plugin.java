@@ -1,15 +1,12 @@
 package ru.kalin;
 
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
 import java.io.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
@@ -21,10 +18,10 @@ public class Plugin extends AbstractMojo {
     @Parameter(property = "directoriesToCheck", required = true, readonly = true)
     String[] directoriesToCheck;
 
-    LinkedList<Found> found = new LinkedList<>();
+    private static final LinkedList<Found> found = new LinkedList<>();
 
     @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
+    public void execute(){
         LinkedHashSet<File> files = new LinkedHashSet<>();
         Arrays.stream(filesToCheck).forEach(fileName -> files.add(new File(fileName)));
         Arrays.stream(directoriesToCheck)
@@ -32,7 +29,7 @@ public class Plugin extends AbstractMojo {
                 .filter(Objects::nonNull)
                 .forEach(dirFiles -> files.addAll(Arrays.asList(dirFiles)));
         System.out.println("Checking files:");
-        files.forEach(this::checkNames);
+        files.forEach(this::checkFile);
         if (found.isEmpty())
             System.out.println("No private info found");
         else {
@@ -40,39 +37,101 @@ public class Plugin extends AbstractMojo {
             found.sort(Found::compareTo);
             found.forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getKeyChance()));
         }
+
     }
 
-    void checkNames(File file) {
+    private String getFileExtension(String fName) {
+        int index = fName.lastIndexOf('.');
+        return index == -1 ? null : fName.substring(index + 1);
+    }
+
+    void checkFile(File file){
         try {
+            String extension = getFileExtension(file.getName());
             ArrayList<String> lines = new BufferedReader(
                     new FileReader(file))
                     .lines()
                     .map(String::toLowerCase).collect(Collectors.toCollection(ArrayList::new));
-            for (int i = 0; i < lines.size(); i++) {
-                String line = lines.get(i);
-                boolean hasSuspiciousName = line.matches(".*(password|api|login|username|passwd|user)+.*");
-                byte chance = checkPass(line);
-                if (hasSuspiciousName || chance >= 1) {
-                    found.add(new Found(file.getAbsolutePath(), i + 1, hasSuspiciousName ? chance + 2 : chance));
-                }
-            }
+
+            if (Objects.equals(extension, "xml")) {
+                for (int i = 0; i < lines.size(); i++)
+                    checkXMLPass(lines.get(i).strip(), i, file);
+            } else
+                for (int i = 0; i < lines.size(); i++)
+                    checkPass(lines.get(i).strip(), i, file);
+
+
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    static byte checkPass(String line) {
-        String pass = "";
-        byte chance = 0;
+    void checkPass(String line, int i, File file) {
         char quot;
         if (line.matches(".*\".*\".*")) {
             quot = '"';
         } else if (line.matches(".*'.*'.*")) {
             quot = '\'';
         } else
-            return chance;
+            return;
 
-        pass = line.substring(line.indexOf(quot) + 1, line.lastIndexOf(quot)).strip();
+        String pass = line.substring(line.indexOf(quot) + 1, line.lastIndexOf(quot)).strip();
+        byte chance = getChance(pass);
+        byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+        if (chance + hasSuspicious >= 1) {
+            found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
+        }
+    }
+
+    void checkXMLPass(String line, int i, File file) {
+        long count = line.codePoints().filter(ch -> ch == '<').count();
+        if (count >= 1) {
+
+            //definition of quotes
+            char sign = 0;
+            if (line.matches(".*\".*\".*")) {
+                sign = '"';
+            } else if (line.matches(".*'.*'.*")) {
+                sign = '\'';
+            }
+
+            Pattern arg = Pattern.compile(sign + "(.*?)" + sign);
+            Matcher matcher = arg.matcher(line);
+            byte chance = 0;
+            while (matcher.find()) {
+                String match = matcher.group(0);
+                String pass = match.substring(match.indexOf(sign) + 1, match.lastIndexOf(sign)).strip();
+                byte curChance = getChance(pass);
+                if (curChance > chance)
+                    chance = curChance;
+            }
+
+            if (count == 2) {
+                String pass = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<")).strip();
+                byte curChance = getChance(pass);
+                if (curChance > chance)
+                    chance = curChance;
+            }
+
+            //adding to found list
+            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+            if (chance + hasSuspicious >= 1) {
+                found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
+            }
+
+
+        } else {
+            byte chance = getChance(line.trim());
+            //adding to found list
+            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+            if (chance + hasSuspicious >= 1) {
+                found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
+            }
+        }
+    }
+
+    byte getChance(String pass) {
+        byte chance = 0;
         if (pass.matches("[\\w:!@.#$%&*()=\\-+]+")) {
             chance += 1;
             if (pass.length() >= 8) {
@@ -86,7 +145,7 @@ public class Plugin extends AbstractMojo {
         return chance;
     }
 
-    static double entropy(String str) {
+    double entropy(String str) {
         byte[] fileContent = str.getBytes();
 
         // create array to keep track of frequency of bytes
@@ -101,10 +160,10 @@ public class Plugin extends AbstractMojo {
 
         // calculate entropy
         double entropy = 0;
-        for (int i = 0; i < frequency_array.length; i++) {
-            if (frequency_array[i] != 0) {
+        for (int j : frequency_array) {
+            if (j != 0) {
                 // calculate the probability of a particular byte occuring
-                double probabilityOfByte = (double) frequency_array[i] / (double) fileContentLength;
+                double probabilityOfByte = (double) j / (double) fileContentLength;
 
                 // calculate the next value to sum to previous entropy calculation
                 double value = probabilityOfByte * (Math.log(probabilityOfByte) / Math.log(2));
