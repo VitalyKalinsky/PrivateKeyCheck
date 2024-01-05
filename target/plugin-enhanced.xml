@@ -11,7 +11,7 @@
   <goalPrefix>privateKeyCheck</goalPrefix>
   <isolatedRealm>false</isolatedRealm>
   <inheritedByDefault>true</inheritedByDefault>
-  <requiredJavaVersion>17</requiredJavaVersion>
+  <requiredJavaVersion>11</requiredJavaVersion>
   <requiredMavenVersion>3.9.0</requiredMavenVersion>
   <mojos>
     <mojo>

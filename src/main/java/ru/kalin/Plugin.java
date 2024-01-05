@@ -26,9 +26,8 @@ public class Plugin extends AbstractMojo {
         LinkedHashSet<File> files = new LinkedHashSet<>();
         Arrays.stream(filesToCheck).forEach(fileName -> files.add(new File(fileName)));
         Arrays.stream(directoriesToCheck)
-                .map(dirName -> new File(dirName).listFiles())
-                .filter(Objects::nonNull)
-                .forEach(dirFiles -> files.addAll(Arrays.asList(dirFiles)));
+                .map(File::new)
+                .forEach(dir -> files.addAll(recFile(dir)));
         System.out.println("Checking files:");
         files.forEach(this::checkFile);
         if (found.isEmpty())
@@ -39,6 +38,20 @@ public class Plugin extends AbstractMojo {
             found.forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getKeyChance()));
         }
 
+    }
+    LinkedList<File> recFile(File dir) {
+        LinkedList<File> files = new LinkedList<>();
+        if (dir.isDirectory()) {
+            for (File file : Objects.requireNonNull(dir.listFiles())) {
+                if (file.isDirectory()) {
+                    files.addAll(recFile(file));
+                } else {
+                    files.add(file);
+                }
+            }
+        } else
+            files.add(dir);
+        return files;
     }
 
     private String getFileExtension(String fName) {
@@ -137,7 +150,6 @@ public class Plugin extends AbstractMojo {
     byte getChance(String pass) {
         byte chance = 0;
         if (pass.matches("[\\w:!@.#$%&*()=\\-+]+")) {
-            chance += 1;
             if (pass.length() >= 8) {
                 chance += 2;
             }
