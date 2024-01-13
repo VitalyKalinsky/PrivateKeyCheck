@@ -3,9 +3,9 @@ package ru.kalin;
 public class Found implements Comparable<Found>{
     private String fileName;
     private int line;
-    private int keyChance;
+    private final double keyChance;
 
-    public Found(String fileName, int line, int keyChance) {
+    public Found(String fileName, int line, double keyChance) {
         this.fileName = fileName;
         this.line = line;
         this.keyChance = keyChance;
@@ -27,16 +27,16 @@ public class Found implements Comparable<Found>{
         this.line = line;
     }
 
-    public int getKeyChance() {
-        return keyChance > 10 ? keyChance - keyChance % 10 : keyChance;
+    public double getKeyChance() {
+        return keyChance;
     }
 
-    public void setKeyChance(int keyChance) {
-        this.keyChance = keyChance;
+    public int getOutputKeyChance(){
+        return (int) Math.round(keyChance > 10 ? keyChance - keyChance % 10 : keyChance);
     }
 
     @Override
     public int compareTo(Found comp) {
-        return comp.getKeyChance() - getKeyChance();
+        return -Double.compare(getKeyChance(), comp.getKeyChance());
     }
 }

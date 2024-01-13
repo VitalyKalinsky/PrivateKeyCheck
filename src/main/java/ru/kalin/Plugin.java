@@ -39,11 +39,12 @@ public class Plugin extends AbstractMojo {
             System.out.println("Found private info");
             found.sort(Found::compareTo);
             found.stream()
-                    .filter(f -> f.getKeyChance() > iProbability)
-                    .forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getKeyChance()));
+                    .filter(f -> f.getOutputKeyChance() > iProbability)
+                    .forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getOutputKeyChance()));
         }
 
     }
+
     LinkedList<File> recFile(File dir) {
         LinkedList<File> files = new LinkedList<>();
         if (dir.isDirectory()) {
@@ -93,21 +94,21 @@ public class Plugin extends AbstractMojo {
             sign = '\'';
         } else
             return;
-        byte chance = getChanceRexex(line, sign);
-        byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+        double chance = getChanceRegex(line, sign);
+        byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
         if (chance + hasSuspicious >= 1) {
             found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
         }
     }
 
-    private byte getChanceRexex(String line, char sign) {
+    private double getChanceRegex(String line, char sign) {
         Pattern arg = Pattern.compile(sign + "(.*?)" + sign);
         Matcher matcher = arg.matcher(line);
-        byte chance = 0;
+        double chance = 0;
         while (matcher.find()) {
             String match = matcher.group(0);
             String pass = match.substring(match.indexOf(sign) + 1, match.lastIndexOf(sign)).strip();
-            byte curChance = getChance(pass);
+            double curChance = getChance(pass);
             if (curChance > chance)
                 chance = curChance;
         }
@@ -126,42 +127,40 @@ public class Plugin extends AbstractMojo {
                 sign = '\'';
             }
 
-            byte chance = getChanceRexex(line, sign);
+            double chance = getChanceRegex(line, sign);
 
             if (count == 2) {
                 String pass = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<")).strip();
-                byte curChance = getChance(pass);
+                double curChance = getChance(pass);
                 if (curChance > chance)
                     chance = curChance;
             }
 
             //adding to found list
-            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
             if (chance + hasSuspicious >= 1) {
                 found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
             }
 
 
         } else {
-            byte chance = getChance(line.trim());
+            double chance = getChance(line.trim());
             //adding to found list
-            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 2 : 0);
+            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
             if (chance + hasSuspicious >= 1) {
                 found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
             }
         }
     }
 
-    byte getChance(String pass) {
-        byte chance = 0;
+    double getChance(String pass) {
+        double chance = 0;
         if (pass.matches("[\\w:!@.#$%&*()=\\-+]+")) {
             if (pass.length() >= 8) {
-                chance += 2;
+                chance += 1;
             }
             double entropy = entropy(pass);
-            if (entropy >= 3) {
-                chance += Math.round(2 + entropy);
-            }
+            chance += entropy >= 3 ? Math.log(entropy) * 10 % 10 * 1.9 : 0;
         }
         return chance;
     }
