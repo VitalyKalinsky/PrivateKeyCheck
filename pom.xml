@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>ru.kalin</groupId>
-    <artifactId>privateKeyCheck</artifactId>
-    <version>1.0</version>
+    <artifactId>APIKeyFinder</artifactId>
+    <version>1.1</version>
     <packaging>maven-plugin</packaging>
-    <name>privateKeyCheck</name>
+    <name>APIKeyFinder</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

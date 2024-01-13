@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 
-@Mojo(name = "checkPrivateKeys")
+@Mojo(name = "findAPIKeys")
 public class Plugin extends AbstractMojo {
     @Parameter(property = "filesToCheck", required = true, readonly = true)
     String[] filesToCheck;
@@ -19,23 +19,28 @@ public class Plugin extends AbstractMojo {
     @Parameter(property = "directoriesToCheck", required = true, readonly = true)
     String[] directoriesToCheck;
 
+    @Parameter(property = "probability", readonly = true, defaultValue = "5")
+    String probability;
+
     private static final LinkedList<Found> found = new LinkedList<>();
 
     @Override
     public void execute() {
         LinkedHashSet<File> files = new LinkedHashSet<>();
+        int iProbability = Math.min(Integer.parseInt(probability), 10);
         Arrays.stream(filesToCheck).forEach(fileName -> files.add(new File(fileName)));
         Arrays.stream(directoriesToCheck)
                 .map(File::new)
                 .forEach(dir -> files.addAll(recFile(dir)));
-        System.out.println("Checking files:");
         files.forEach(this::checkFile);
         if (found.isEmpty())
             System.out.println("No private info found");
         else {
             System.out.println("Found private info");
             found.sort(Found::compareTo);
-            found.forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getKeyChance()));
+            found.stream()
+                    .filter(f -> f.getKeyChance() > iProbability)
+                    .forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getKeyChance()));
         }
 
     }
