@@ -16,9 +16,6 @@ public class Plugin extends AbstractMojo {
     @Parameter(property = "filesToCheck", required = true, readonly = true)
     String[] filesToCheck;
 
-    @Parameter(property = "directoriesToCheck", required = true, readonly = true)
-    String[] directoriesToCheck;
-
     @Parameter(property = "probability", readonly = true, defaultValue = "5")
     String probability;
 
@@ -28,10 +25,10 @@ public class Plugin extends AbstractMojo {
     public void execute() {
         LinkedHashSet<File> files = new LinkedHashSet<>();
         int iProbability = Math.min(Integer.parseInt(probability), 10);
-        Arrays.stream(filesToCheck).forEach(fileName -> files.add(new File(fileName)));
-        Arrays.stream(directoriesToCheck)
+        Arrays.stream(filesToCheck)
                 .map(File::new)
                 .forEach(dir -> files.addAll(recFile(dir)));
+
         files.forEach(this::checkFile);
         if (found.isEmpty())
             System.out.println("No private info found");

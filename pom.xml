@@ -6,7 +6,7 @@
 
     <groupId>ru.kalin</groupId>
     <artifactId>APIKeyFinder</artifactId>
-    <version>1.1</version>
+    <version>1.2</version>
     <packaging>maven-plugin</packaging>
     <name>APIKeyFinder</name>
 

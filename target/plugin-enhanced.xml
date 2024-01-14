@@ -7,7 +7,7 @@
   <description></description>
   <groupId>ru.kalin</groupId>
   <artifactId>APIKeyFinder</artifactId>
-  <version>1.1</version>
+  <version>1.2</version>
   <goalPrefix>APIKeyFinder</goalPrefix>
   <isolatedRealm>false</isolatedRealm>
   <inheritedByDefault>true</inheritedByDefault>
@@ -29,13 +29,6 @@
       <threadSafe>false</threadSafe>
       <parameters>
         <parameter>
-          <name>directoriesToCheck</name>
-          <type>java.lang.String[]</type>
-          <required>true</required>
-          <editable>false</editable>
-          <description></description>
-        </parameter>
-        <parameter>
           <name>filesToCheck</name>
           <type>java.lang.String[]</type>
           <required>true</required>
@@ -51,7 +44,6 @@
         </parameter>
       </parameters>
       <configuration>
-        <directoriesToCheck implementation="java.lang.String[]">${directoriesToCheck}</directoriesToCheck>
         <filesToCheck implementation="java.lang.String[]">${filesToCheck}</filesToCheck>
         <probability implementation="java.lang.String" default-value="5">${probability}</probability>
       </configuration>
