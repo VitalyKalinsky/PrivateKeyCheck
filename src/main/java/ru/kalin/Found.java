@@ -1,18 +1,23 @@
 package ru.kalin;
 
 public class Found implements Comparable<Found>{
+    private String password;
     private String fileName;
     private int line;
     private final double keyChance;
 
-    public Found(String fileName, int line, double keyChance) {
+    public Found(String fileName, int line, double keyChance, String password) {
         this.fileName = fileName;
         this.line = line;
         this.keyChance = keyChance;
+        this.password = password;
     }
 
     public String getFileName() {
         return fileName;
+    }
+    public String getPassword(){
+        return password;
     }
 
     public void setFileName(String fileName) {

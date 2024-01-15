@@ -36,8 +36,8 @@ public class Plugin extends AbstractMojo {
             System.out.println("Found private info");
             found.sort(Found::compareTo);
             found.stream()
-                    .filter(f -> f.getOutputKeyChance() > iProbability)
-                    .forEach(el -> System.out.printf("      at %s:%d with probability %d\n", el.getFileName(), el.getLine(), el.getOutputKeyChance()));
+                    .filter(f -> f.getOutputKeyChance() >= iProbability)
+                    .forEach(el -> System.out.printf("      %s at %s:%d with probability %d\n", el.getPassword(), el.getFileName(), el.getLine(), el.getOutputKeyChance()));
         }
 
     }
@@ -91,25 +91,26 @@ public class Plugin extends AbstractMojo {
             sign = '\'';
         } else
             return;
-        double chance = getChanceRegex(line, sign);
-        byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
-        if (chance + hasSuspicious >= 1) {
-            found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
-        }
+        String passToAdd = "";
+        double chance = 0;
+        matchAndAdd(line, i, file, sign, passToAdd, chance);
     }
 
-    private double getChanceRegex(String line, char sign) {
+    private void matchAndAdd(String line, int i, File file, char sign, String passToAdd, double chance) {
         Pattern arg = Pattern.compile(sign + "(.*?)" + sign);
         Matcher matcher = arg.matcher(line);
-        double chance = 0;
         while (matcher.find()) {
             String match = matcher.group(0);
             String pass = match.substring(match.indexOf(sign) + 1, match.lastIndexOf(sign)).strip();
             double curChance = getChance(pass);
-            if (curChance > chance)
+            if (curChance > chance) {
                 chance = curChance;
+                passToAdd = pass;
+            }
         }
-        return chance;
+        if (chance >= 1) {
+            found.add(new Found(file.getAbsolutePath(), i + 1, chance, passToAdd));
+        }
     }
 
     void checkXMLPass(String line, int i, File file) {
@@ -124,40 +125,36 @@ public class Plugin extends AbstractMojo {
                 sign = '\'';
             }
 
-            double chance = getChanceRegex(line, sign);
+            String passToAdd = "";
+            double chance = 0;
 
             if (count == 2) {
                 String pass = line.substring(line.indexOf(">") + 1, line.lastIndexOf("<")).strip();
                 double curChance = getChance(pass);
-                if (curChance > chance)
+                if (curChance > chance) {
                     chance = curChance;
+                    passToAdd = pass;
+                }
             }
 
-            //adding to found list
-            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
-            if (chance + hasSuspicious >= 1) {
-                found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
-            }
+            matchAndAdd(line, i, file, sign, passToAdd, chance);
 
 
         } else {
-            double chance = getChance(line.trim());
-            //adding to found list
-            byte hasSuspicious = (byte) (line.matches(".*(password|api|login|username|passwd|user)+.*") ? 1 : 0);
-            if (chance + hasSuspicious >= 1) {
-                found.add(new Found(file.getAbsolutePath(), i + 1, chance + hasSuspicious));
+            String pass = line.trim();
+            double chance = getChance(pass);
+            //adding to found list;
+            if (chance >= 1) {
+                found.add(new Found(file.getAbsolutePath(), i + 1, chance, pass));
             }
         }
     }
 
     double getChance(String pass) {
         double chance = 0;
-        if (pass.matches("[\\w:!@.#$%&*()=\\-+]+")) {
-            if (pass.length() >= 8) {
-                chance += 1;
-            }
+        if (pass.matches("[\\w:!@.#$%&*(\\[\\])=\\-+]+") && pass.length() >= 8) {
             double entropy = entropy(pass);
-            chance += entropy >= 3 ? Math.log(entropy) * 10 % 10 * 1.9 : 0;
+            chance += entropy >= 3 ? Math.log(entropy) * 10 % 10 * 1.9 + 1 : 0;
         }
         return chance;
     }
